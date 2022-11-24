@@ -32,16 +32,13 @@ z.environment( 5).datum
 * Run "bundle install" and "bundle update"
 * customize config/connect.yml
 
-**or** start a new project and require the gem in the usual manner.
-
-```
-* Initialize the data-structure by `Tg::Setup.init_database)`
+* Initialize the data-structure by `Tg::Setup.init_database`
 * Populate the timegraph by `Tg::TimeGraph.populate 2015..2030`
 * Verify the setup by `Date.today.to_tg`
 
 To play around, start the console by
 ```
-  cd bin
+cd bin
   ./console t  # test-modus
 ```
 
