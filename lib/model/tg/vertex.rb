@@ -13,10 +13,10 @@ module Tg
 	#  * - (count)
 	#
   def next
-		nodes( :out, via: Tg::Grid , expand: true)
+		nodes( :out, via: Tg::GridOf )
   end
   def prev
-		nodes( :in, via: Tg::Grid , expand: true)
+		nodes( :in, via: Tg::GridOf )
   end
 
 		# simplified and specialized form of traverse
@@ -37,7 +37,7 @@ module Tg
 		#
 		def vector  length, where: nil, function: nil,  start_at: 0
 		  dir =  length <0 ? :in : :out ;
-			the_vector_query = traverse dir, via: /grid/, depth: length.abs, where: where, execute: false
+			the_vector_query = traverse dir, via: Tg::GridOf, depth: length.abs, where: where, execute: false
 #			the_vector_query.while "inE('ml_has_ohlc').out != #{to_tg.rrid}  " if to_tg.present?  future use
 			t=  Arcade::Query.new from: the_vector_query
 			t.where "$depth >= #{start_at}"
@@ -67,7 +67,7 @@ i.e
 =end
     def move count
       dir =  count <0 ? :in : :out
-      edge_class = detect_edges( dir, /grid/, expand: false )
+      edge_class = detect_edges( dir, Tg::GridOf, expand: false )
       q1 =  Arcade::Query.new( kind: :traverse )
         .while( " $depth <= #{count.abs}")
         .from( self )
