@@ -15,9 +15,9 @@ require 'arcade-time-graph'
 module My; end
 ##
 # Include model files
-#loader =  Zeitwerk::Loader.new
-#loader.push_dir ("#{__dir__}/model")
-#loader.setup
+loader =  Zeitwerk::Loader.new
+loader.push_dir ("#{__dir__}/model")
+loader.setup
 
 read_yml = -> (key) do
 	YAML::load_file( File.expand_path('../spec.yml',__FILE__))[key]
