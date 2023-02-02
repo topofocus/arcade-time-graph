@@ -28,8 +28,10 @@ z.environment( 5).datum
 (datum is a method of Tg::Tag)
 
 *Prerequisites* : 
-* Ruby 3.1  and a running ArcadeDB-Server
+* Ruby 3.1 (or above)  and a running ArcadeDB-Server
+* add `gem "arcade-time-graph", git: "https://github.com/topofocus/arcade-time-graph"` to your Gemfile
 * Run "bundle install" and "bundle update"
+* include `require 'arcade-time-graph'` in your script
 * customize config/connect.yml
 
 * Initialize the data-structure by `Tg::Setup.init_database`
