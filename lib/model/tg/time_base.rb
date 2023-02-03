@@ -109,6 +109,6 @@ end
  ## Use the output of `ModelClass.database_name` as DB type  name
  ##
 __END__
- CREATE PROPERTY pg_time_base.value_string STRING
- CREATE PROPERTY pg_time_base.value INTEGER
- CREATE INDEX  ON pg_time_base ( value ) NOTUNIQUE
+ CREATE PROPERTY tg_time_base.value_string STRING
+ CREATE PROPERTY tg_time_base.value INTEGER
+ CREATE INDEX  ON tg_time_base ( value ) NOTUNIQUE
