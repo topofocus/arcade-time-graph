@@ -31,7 +31,7 @@ module Tg
   #
 
   def jahr
-    nodes :in, via: Tg::MonthOf 
+    nodes( :in, via: Tg::MonthOf ).first
   end
 
 	# returns the absolute Month-Value
@@ -49,7 +49,7 @@ module Tg
 		q = Query.new  from: Tg::Jahr, where: { value: datum.year }
 		w = Query.new  from: q
 		w.nodes :out, via: Tg::MonthOf, where: { value: datum.month }
-    w.query.select_result
+    w.query.select_result.first
 
 	end
 

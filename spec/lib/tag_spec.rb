@@ -29,7 +29,7 @@ describe Tg::Tag do
        expect( Tg::Monat[month].tag(5).value ).to eq [5,5,5,5,5,5]
     end
 
-  #  it  "Adress a range of days" do
+  #  it  "Address a range of days" do
   #    month= 6..9
   #    expect( Tg::Monat[month].tag(5).datum.sort).to eq [Date.new(2019,9,5),Date.new(2020,9,5), Date.new(2021,9,5)]
   #  end

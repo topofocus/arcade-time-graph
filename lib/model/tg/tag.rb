@@ -21,7 +21,7 @@ module Tg
 
    # returns a Tg::Monat record
     def monat
-      query.nodes( :in, via: Tg::DayOf ).query.select_result
+      query.nodes( :in, via: Tg::DayOf ).query.select_result.first
     end
 
     def datum
@@ -50,7 +50,7 @@ module Tg
       w.nodes :out, via: Tg::MonthOf, where: { value: datum.month }, expand: true
       x = Arcade::Query.new  from: w
       x.nodes :out, via: Tg::DayOf, where: { value: datum.day }
-      x.query.select_result
+      x.query.select_result.first
     end
   end
 end

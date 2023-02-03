@@ -1,10 +1,10 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'arcade/tg/version'
+require 'tg/version'
 Gem::Specification.new do |s|
   s.name        = "arcade-time-graph"
 #  s.version	= File.open('VERSION').read.strip
-  s.version       = Arcade::TG::VERSION
+  s.version       = Tg::VERSION
   s.authors     = ["Hartmut Bischoff"]
   s.email       = ["topofocus@gmail.com"]
   s.homepage    = 'https://github.com/topofocus/arcade-time_graph'
