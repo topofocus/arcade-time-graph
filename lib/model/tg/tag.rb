@@ -29,7 +29,7 @@ module Tg
       # todo
       # formulate a match query providing anything in just one query
       m = monat
-      Date.new m.jahr.value, m.value, value #   "#{ value}.#{m.value}.#{m.jahr.value}"
+      Date.new m.jahr.w, m.w, w #   "#{ value}.#{m.value}.#{m.jahr.value}"
     end
 
 =begin
@@ -45,11 +45,12 @@ module Tg
 =end
     def self.fetch datum , &b  # parameter: a date
       #		query_database( "select  expand (out_tg_day_of.in[value = #{datum.day}]) from (select  expand (out_tg_month_of.in[value = #{datum.month}]) from (select from tg_jahr where value = #{datum.year} ) ) ") &.first
-      q = Arcade::Query.new  from: Tg::Jahr, where: { value: datum.year }
+      q = Arcade::Query.new  from: Tg::Jahr, where: { w: datum.year }
       w = Arcade::Query.new  from: q
-      w.nodes :out, via: Tg::MonthOf, where: { value: datum.month }, expand: true
+      w.nodes :out, via: Tg::MonthOf, where: { w: datum.month }, expand: true
       x = Arcade::Query.new  from: w
-      x.nodes :out, via: Tg::DayOf, where: { value: datum.day }
+      x.nodes :out, via: Tg::DayOf, where: { w: datum.day }
+      puts x.to_s
       x.query.select_result.first
     end
   end

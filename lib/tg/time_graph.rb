@@ -37,22 +37,22 @@ class TimeGraph
 			print "Grid: "
 			year_grid, month_grid, day_grid, hour_grid  =  nil
 			years.each do | the_year |
-				year_vertex = Tg::Jahr.create value: the_year
+				year_vertex = Tg::Jahr.create w: the_year
 					puts "YEAR_GRID: #{year_grid.inspect}"
 				Tg::GridOf.create( from: year_grid , to: year_vertex ) if year_grid.present?
 				year_grid =  year_vertex
 				month_vertices = ( 1 .. 12 ).map do | the_month |
-					month_vertex= Tg::Monat.create value: the_month
+					month_vertex= Tg::Monat.create w: the_month
 					Tg::GridOf.create( from: month_grid , to: month_vertex ) if month_grid.present?
 					month_grid =  month_vertex
 					last_month_day =  (Date.new( the_year, the_month+1, 1)-1).day rescue 31  # rescue covers month > 12
 					day_vertices = ( 1 .. last_month_day ).map do | the_day |
-						day_vertex = Tg::Tag.create value: the_day
+						day_vertex = Tg::Tag.create w: the_day
 						Tg::GridOf.create( from: day_grid , to: day_vertex ) if day_grid.present?
 						day_grid =  day_vertex
 						if kind_of_grid == 'hourly'
 							hour_vertices = (0 .. 23).map do |h|
-								hour_vertex =  Stunde.create( value: h)
+								hour_vertex =  Stunde.create( w: h)
 
 								Tg::GridOf.create( from: hour_grid , to: hour_vertex ) if hour_grid.present?
 								hour_grid =  hour_vertex
@@ -86,9 +86,9 @@ if $0 == __FILE__
 	puts "Features of the DateTime Graph"
 	puts '-' * 40
 	puts
-	puts "Allocated Month   => Monat.first.value:\t\t" + Monat.first.value.to_s
+	puts "Allocated Month   => Monat.first.w:\t\t" + Monat.first.w.to_s
 	puts
-	puts "Adressing Days    => Monat.first.tag[2].value:\t" + Monat.first.tag[2].value.to_s
+	puts "Adressing Days    => Monat.first.tag[2].w:\t" + Monat.first.tag[2].w.to_s
 	puts
 	puts "Display Date      => Monat.first.tag[13].datum:\t"+ Monat.first.tag[13].datum.to_s
 

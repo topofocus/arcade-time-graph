@@ -21,7 +21,7 @@ module Tg
     else
 #			out_tg_day_of.in
       q =  Arcade::Query.new  from: rid
-      q.nodes :out, via: Tg::DayOf, where: { value: key }
+      q.nodes :out, via: Tg::DayOf, where: { w: key }
       q.query.select_result
     end
   end
@@ -46,9 +46,9 @@ module Tg
 
 	def self.fetch datum   # parameter: a date
 #		query_database( "select  expand (out_tg_day_of.in[value = #{datum.day}]) from (select  expand (out_tg_month_of.in[value = #{datum.month}]) from (select from tg_jahr where value = #{datum.year} ) ) ") &.first
-		q = Query.new  from: Tg::Jahr, where: { value: datum.year }
+		q = Query.new  from: Tg::Jahr, where: { w: datum.year }
 		w = Query.new  from: q
-		w.nodes :out, via: Tg::MonthOf, where: { value: datum.month }
+		w.nodes :out, via: Tg::MonthOf, where: { w: datum.month }
     w.query.select_result.first
 
 	end

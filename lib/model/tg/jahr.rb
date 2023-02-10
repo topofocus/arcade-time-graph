@@ -13,7 +13,7 @@ module Tg
       else
         key=  key.first		if key.is_a?(Array) && key.size == 1
         #	out_tg_month_of[key].in
-        nodes( :out, via: /month/ , where: { value: key } )
+        nodes( :out, via: /month/ , where: { w: key } )
       end
     end
   end

@@ -20,9 +20,8 @@ z.datum          => Sat, 22 Mar 2003  (returns a Date)
 z.next.datum     => Sun, 23 Mar 2003
 z.prev.datum     => Fri, 21 Mar 2003
 z.move( -20 ).datum => Sun, 02 Mar 2003 
-z.environment( 5).datum
- => ["18.5.2003", "19.5.2003", "20.5.2003", "21.5.2003", "22.5.2003", "23.5.2003", "24.5.2003", "25.5.2003", "26.5.2003", "27.5.2003", "28.5.2003"] 
-
+( z + 3 ).datum  => Tue, 25 Mar 2003
+( z - 3 ).datum  => Wed, 19 Mar 2003
 
 ```
 (datum is a method of Tg::Tag)
@@ -92,27 +91,27 @@ Jahr[2000 .. 2005].value  # returns an array
 Besides the hierarchically TimeGraph »Jahr <-->Monat <--> Tag <--> Stunde«  the Vertices are connected
 horizontally via »grid_to«-Edges. This enables an easy access to the neighbours.
 
-On the Tg::TimeBase-Level a method »environment« is implemented, that gathers the adjacent vertices 
+On the Tg::TimeBase-Level a method »vector« is implemented, that gathers the adjacent vertices 
 via traverse.
 
 ``` ruby
 start =  "7.4.2000".to_tg
-start.environment(3).datum
- => ["4.4.2000", "5.4.2000", "6.4.2000", "7.4.2000", "8.4.2000", "9.4.2000", "10.4.2000"] 
+start.vector(-3).datum
+ => ["5.4.2000", "6.4.2000", "7.4.2000"] 
+start.vector(3).datum
+ => ["7.4.2000", "8.4.2000", "9.4.2000"] 
+ 
+start.vector(3) { :w }                             =>  generates "select w from ..."
+ => [ 7, 8, 9 ]
 
-2.3.1 :003 > start.environment(3,4).datum
- => ["4.4.2000", "5.4.2000", "6.4.2000", "7.4.2000", "8.4.2000", "9.4.2000", "10.4.2000", "11.4.2000"] 
- 
-start.environment(0,3).datum
- => ["7.4.2000", "8.4.2000", "9.4.2000", "10.4.2000"] 
- 
- 
+start.vector(3, function: :median) { :w }          =>  generates "select median(w)  from ..."
+ => 8.0
 ```
 
 ## Assigning Events
 
 To assign something to the TimeGrid its sufficient to create an edge-class and connect this »something», 
-which is represented as Vertex, to the grid. The Diary example below describes how to do it.
+which is represented as Vertex, to the grid. 
 
 However, if a csv-file  with a »date« column is present, it's easier to assign it directly 
 to the grid:
@@ -125,8 +124,8 @@ to the grid:
 assuming the record is read as string, then assigning is straightforward:
 ``` ruby
   ticker, date, open, high, low, close, volume, oi = record.split(',')
-  date.to_tg.assign vertex: Ticker.new(  high: high, ..), via: OHLC_TO, attributes:{ symbol: ticker }
+  date.to_tg.assign vertex: Ticker.new(  high: high, ..), via: OhlcConnect,  symbol: ticker 
 ``` 
 The updated TimeBase-Object is returned. 
 
-»OHLC_TO« is the edge-class and »Ticker« represents a vertex-class
+»OhlcConnect« is the edge-class and »Ticker« represents a vertex-class

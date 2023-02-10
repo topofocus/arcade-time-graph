@@ -27,9 +27,10 @@ module Tg
     #    or
   	#    start = the_asset.at("1.1.2000")
   	#
-		#    start.vector(10)
-	  #
-		#    start.vector(10, function: :median){"mean" }
+		#    start.vector(10)                    ==>  returns an Array of Vertices
+    #    start.vector(10){ "w" }             ==>  returns an Array of Hashes :
+    #                                             [ { w => 10 }, { w: 11 } ... ]
+    #    start.vector(10, function: :median){"mean" }  => returns a single value :   12.5
 		#
 		# with
 		#  function: one of 'eval, min, max, sum abs, decimal, avg, count,mode, median, percentil, variance, stddev'
@@ -38,19 +39,20 @@ module Tg
 		def vector  length, where: nil, function: nil,  start_at: 0
 		  dir =  length <0 ? :in : :out ;
 			the_vector_query = traverse dir, via: Tg::GridOf, depth: length.abs, where: where, execute: false
-#			the_vector_query.while "inE('ml_has_ohlc').out != #{to_tg.rrid}  " if to_tg.present?  future use
+#			the_vector_query.while "inE('ml_has_ohlc').out != #{to_tg.rid}  " if to_tg.present?  future use
 			t=  Arcade::Query.new from: the_vector_query
 			t.where "$depth >= #{start_at}"
+      puts "T: #{t.to_s}"
 			if block_given?
 				if function.present?
 					t.projection( "#{function}(#{yield})")
-          t.query.select_result #  { |result| result.to_a.flatten.last}.first
-				else
+          t.query.select_result.first           # only one value is returned
+        else
 					t.projection yield
-          t.query.select_result # { |result| result.to_a.flatten.last}.compact
+          t.query.select_result                 # returns an array
 				end
-			else
-				t.query
+      else
+        t.query.allocate_model                  # returns a list of vertices
 			end
 		end
 
@@ -74,15 +76,13 @@ i.e
         .nodes( dir, via: edge_class, expand: false)
 
       q2= Arcade::Query.new from: q1, where: "$depth = #{count.abs} "
-      r =  query q2
-
-
-      #    r= db.execute {  "select from ( traverse #{dir}(\"tg_grid_of\") from #{rrid} while $depth <= #{count.abs}) where $depth = #{count.abs} " }
-      if r.size == 1
-        r.first
-      else
-        nil
-      end
+      r =  q2.query.allocate_model
+  #    if r.size == 1
+  #      r.first
+ #     else  # if multible vertices are found, the last one is the date-record, which we want to returna
+            # if the behaviour changes, its also possible to explicit return the Tg::Tag -record
+        r.last
+#      end
     end
 =begin
 Get the node (item) grids in the future

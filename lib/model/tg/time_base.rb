@@ -5,54 +5,34 @@ module  Tg
          File.read(__FILE__).gsub(/.*__END__/m, '')
        end
 =begin
-Searches for specific value records 
+Search for specific records
 
 Examples
   Monat[8]  --> Array of all August-month-records
   Jahr[1930 .. 1945]
 =end
   def self.[] *key
-#    result = OrientSupport::Array.new( work_on: self, 
-#						work_with: db.execute{ "select from #{ref_name} #{db.compose_where( value: key.analyse)}" } )
-		key=  key.first		if key.is_a?(Array) && key.size == 1 
-    q= query.where( value: key).query.allocate_model
-#		result= query_database q
-#		result.size == 1 ? result.first : result # return object if only one record is fetched
+		key=  key.first		if key.is_a?(Array) && key.size == 1
+    q= query.where( w: key).query.allocate_model
   end
 #
   end
-#=begin
-#Moves horizontally within the grid
-#i.e
-#  the_day =  "4.8.2000".to_tg
-#  the_day.move(9).datum  # => "13.8.2000" 
-#  the_day.move(-9).datum # => "26.7.2000"
-#=end
-#  def move count
-#    dir =  count <0 ? 'in' : 'out' 
-#    r= db.execute {  "select from ( traverse #{dir}(\"tg_grid_of\") from #{rrid} while $depth <= #{count.abs}) where $depth = #{count.abs} " }  
-#    if r.size == 1
-#      r.first
-#    else
-#      nil
-#    end
-#  end
 #
 #
 #  def analyse_key key    # :nodoc:
 #
-#    new_key=  if key.first.is_a?(Range) 
+#    new_key=  if key.first.is_a?(Range)
 #			   key.first
 #			elsif key.size ==1
 #			 key.first
 #			else
 #			  key
 #			end
-#  endpt 
+#  end
 #=begin
 #Get the nearest horizontal neighbours
 #
-#Takes one or two parameters. 
+#Takes one or two parameters.
 #
 #  (TG::TimeBase.instance).environment: count_of_previous_nodes, count_of_future_nodes
 #
@@ -71,11 +51,11 @@ Examples
 ##    next_items =  previous_items  if next_items.nil?  # default : symmetric fetching
 ##
 ##    my_query =  -> (count) do
-##			dir =  count <0 ? 'in' : 'out'   
+##			dir =  count <0 ? 'in' : 'out'
 ##			db.execute {  "select from ( traverse #{dir}(\"tg_grid_of\") from #{rrid} while $depth <= #{count.abs}) where $depth >=1 " }   # don't fetch self and return an Array
 ##		end
-##   prev_result = previous_items.zero? ?  []  :  my_query[ -previous_items.abs ] 
-##   next_result = next_items.zero? ?  []  : my_query[ next_items.abs ] 
+##   prev_result = previous_items.zero? ?  []  :  my_query[ -previous_items.abs ]
+##   next_result = next_items.zero? ?  []  : my_query[ next_items.abs ]
 ##   # return a collection suitable for further operations
 ##   OrientSupport::Array.new work_on: self, work_with: (prev_result.reverse <<  self  | next_result )
 ##
@@ -88,15 +68,15 @@ Examples
 #
 #  def _environment previous_items, next_items = nil
 #		q = ->(**p){  OrientSupport::OrientQuery.new **p }
-#     
+#
 #    next_items =  previous_items  if next_items.nil?  # default : symmetric fetching
 #		local_var = :a
 #		statement = q[]
 #		{ in: previous_items , out: next_items}.each do | dir, items|
-#				traverse_query = query kind: 'traverse', while: "$depth <= #{items}" 
+#				traverse_query = query kind: 'traverse', while: "$depth <= #{items}"
 #				traverse_query.nodes dir, via: TG::GRID_OF, expand: false
-#				
-#				statement.let  local_var =>  q[ from: traverse_query, where: '$depth >=1' ] 
+#
+#				statement.let  local_var =>  q[ from: traverse_query, where: '$depth >=1' ]
 #				local_var =  local_var.succ
 #		end
 #    statement.let  '$c= UNIONALL($a,$b) '
@@ -110,5 +90,5 @@ end
  ##
 __END__
  CREATE PROPERTY tg_time_base.value_string STRING
- CREATE PROPERTY tg_time_base.value INTEGER
- CREATE INDEX  ON tg_time_base ( value ) NOTUNIQUE
+ CREATE PROPERTY tg_time_base. w  INTEGER
+ CREATE INDEX  ON tg_time_base ( w ) NOTUNIQUE
