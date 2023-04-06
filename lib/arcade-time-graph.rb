@@ -19,7 +19,7 @@ require_relative 'model/tg/day_of'
 require_relative 'model/tg/has'
 
 require_relative 'tg/time_graph'
-require_relative 'support'
+require_relative 'support/support'
 
 #loader =  Zeitwerk::Loader.new
 ##loader.push_dir ("#{__dir__}/model")

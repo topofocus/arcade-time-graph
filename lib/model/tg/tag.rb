@@ -25,11 +25,11 @@ module Tg
     end
 
     def datum
-      # three queries are fired
-      # todo
-      # formulate a match query providing anything in just one query
-      m = monat
-      Date.new m.jahr.w, m.w, w #   "#{ value}.#{m.value}.#{m.jahr.value}"
+      # old (inefficient) solution
+     # m = monat
+     # Date.new m.jahr.w, m.w, w #   "#{ value}.#{m.value}.#{m.jahr.value}"
+     Date.new *traverse( :in, via: TG::DateOf , depth: 3 ).map(&:w).reverse
+
     end
 
 =begin
