@@ -1,7 +1,7 @@
 module Tg
   class Vertex  < Arcade::Vertex
 
-	# If the time_graph is used any Vertex class inherents the methods defined below.
+	# If the time_graph is used, any Vertex class inherents the methods defined below.
 	#
 	# Thus
 	#
@@ -13,13 +13,13 @@ module Tg
 	#  * - (count)
 	#
   def next
-		nodes( :out, via: Tg::GridOf )
+    nodes( :out, via: Tg::GridOf ).first
   end
   def prev
-		nodes( :in, via: Tg::GridOf )
+    nodes( :in, via: Tg::GridOf ).first
   end
 
-		# simplified and specialized form of traverse
+		# simplified form of traverse
 		#
 		# we follow the graph (Direction: out)
 		#
@@ -39,10 +39,9 @@ module Tg
 		def vector  length, where: nil, function: nil,  start_at: 0
 		  dir =  length <0 ? :in : :out ;
 			the_vector_query = traverse dir, via: Tg::GridOf, depth: length.abs, where: where, execute: false
-#			the_vector_query.while "inE('ml_has_ohlc').out != #{to_tg.rid}  " if to_tg.present?  future use
+#			the_vector_query.while "inE('tg_has_ohlc').out != #{to_tg.rid}  " if to_tg.present?  future use
 			t=  Arcade::Query.new from: the_vector_query
 			t.where "$depth >= #{start_at}"
-      puts "T: #{t.to_s}"
 			if block_given?
 				if function.present?
 					t.projection( "#{function}(#{yield})")

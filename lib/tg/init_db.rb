@@ -5,7 +5,7 @@
         tg_vertices =  [ Tg::TimeBase, Tg::Stunde, Tg::Tag, Tg::Monat, Tg::Jahr  ]
         tg_edges.each &:create_type
         tg_vertices.each &:create_type
-      rescue Arcade::QueryError
+      rescue HTTPX::HTTPError
         Arcade::Database.logger.info "database types already present"
       end
     end

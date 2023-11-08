@@ -4,13 +4,13 @@ require 'database_helper'
 describe Tg::TimeGraph do
   before( :all ) do
     clear_arcade
-    DB = Arcade::Init.connect :test
+#    Arcade::Init.connect :test  do not connect twice!
     Tg::Setup.init_database
     endyear =  Date.today.year
     Tg::TimeGraph.populate  endyear-3 .. endyear+2
   end
   context "check environment" do
-    it "nessesary classes are allocated" do
+    it "nessecary classes are allocated" do
       [ Tg::Monat, Tg::Tag, Tg::Jahr ].each do | klass |
         expect( klass.superclass).to eq Tg::TimeBase
       end

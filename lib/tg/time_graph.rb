@@ -9,8 +9,9 @@ class TimeGraph
 		# thus creating edges is providing a static :from-vertex to numerous :to-vertices
 		# the to:vertices are first created and fenced in an array. Then all edges are created at once.
 		# In Rest-Mode this is much quicker.
-		def populate years = (1900 .. 2050), delete: true
+		def populate years, delete: true
 
+      years =  2020 .. 2050 if years.blank?
 			count_gridspace = -> do
 				[Tg::Jahr,Tg::Monat,Tg::Tag,Tg::Stunde].map{|x|  "#{x.to_s} -> #{x.count}" }
 			end
@@ -18,27 +19,28 @@ class TimeGraph
 			if delete
 				puts count_gridspace[].join('; ')
 				puts "deleting content"
-				[Tg::Jahr,Tg::Monat,Tg::Tag,Tg::Stunde].each{|x| x.delete all: true}
+        db = Arcade::Init.db
+        [Tg::Jahr,Tg::Monat,Tg::Tag,Tg::Stunde].each{|x|  db.transmit{ "delete from `#{x.database_name}`" }  }
+        [ Tg::DateOf, Tg::TimeOf, Tg::DayOf, Tg::MonthOf, Tg::GridOf, Tg::Has ].each{|x|  db.transmit{ "delete from `#{x.database_name}`" }  }
 				puts "checking .."
 				puts count_gridspace[].join('; ')
 			end
 
-			kind_of_grid = if years.is_a? Range
-											 'daily'
-										 else
-											 years = years.is_a?(Fixnum) ? [years]: years
-											 'hourly'
-										 end
-
+ #     kind_of_grid = if years.is_a?( Range ) || years.is_a? ( Array )
+#											 'daily'
+#										 else
+#											 years = years.is_a?(Integer) ? [years]: years
+#											 'hourly'
+#										 end
+      kind_of_grid = 'daily'
 			### switch logger level
       previous_logger_level = Arcade::Database.logger.level
-#			Arcade::Database.logger.level = 2
+			Arcade::Database.logger.level =  Logger::ERROR
 			### NOW WHERE THE DATABASE IS CLEAN, POPULATE IT WITH A DAILY GRID
 			print "Grid: "
 			year_grid, month_grid, day_grid, hour_grid  =  nil
 			years.each do | the_year |
 				year_vertex = Tg::Jahr.create w: the_year
-					puts "YEAR_GRID: #{year_grid.inspect}"
 				Tg::GridOf.create( from: year_grid , to: year_vertex ) if year_grid.present?
 				year_grid =  year_vertex
 				month_vertices = ( 1 .. 12 ).map do | the_month |
@@ -74,7 +76,7 @@ class TimeGraph
 	end
 end # class
 end # Module
-## here we start if the file is called from the command-lind
+## here we start if the file is called from the command-line
 if $0 == __FILE__
 	require './config/boot'
 	#Tg::Setup.init_database   # --> config/init_db

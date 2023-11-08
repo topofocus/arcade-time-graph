@@ -2,10 +2,22 @@
 
 Simple Time Graph using ArcadeDB. 
 
+Initialize with:
+```ruby
+require 'arcade-time-graph'
+
+Tg::Setup.Init_database  # creates database types tg_jahr, tg_monat,  tg_tag 
+                         # and corresponding edges
+Tg::TimeGraph.populate 2020 .. 2025 
+                         # populates the timegraph for the given years
+
+```
+
+
 This Graph is realized
 
 ```ruby
-Jahr -- [MonthOf] -- Monat --[DayOf]-- Tag --[TimeOf]-- Stunde
+Tg::Jahr -- [Tg::MonthOf] -- Tg::Monat -- [Tg::DayOf] -- Tg::Tag -- [Tg::TimeOf] -- Tg::Stunde
 ```
 The nodes are cross-linked and any point of the grid is easily accessed.  
 The library provides »to_tg« additions to »Date«, »DateTime« and »String«. 

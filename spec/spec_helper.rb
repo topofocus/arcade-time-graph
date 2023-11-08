@@ -6,24 +6,17 @@ require 'rspec/given'
 require 'rspec/collection_matchers'
 require 'yaml'
 require 'zeitwerk'
-#require 'active_support'
-
-require 'arcade'
-require 'arcade-time-graph'
-
-## todo: is this necessary?
-module My; end
 ##
-# Include model files
+require 'arcade-time-graph'
+#read_yml = -> (key) do
+#	YAML::load_file( File.expand_path('../spec.yml',__FILE__))[key]
+#end
+Arcade::Init.connect :test
+
 loader =  Zeitwerk::Loader.new
 loader.push_dir ("#{__dir__}/model")
 loader.setup
-
-read_yml = -> (key) do
-	YAML::load_file( File.expand_path('../spec.yml',__FILE__))[key]
-end
-Arcade::Init.connect :test
-
+#module So; end
 RSpec.configure do |config|
 	config.mock_with :rspec
 	config.color = true

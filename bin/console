@@ -11,7 +11,7 @@ require 'bundler/setup'
 #require 'zeitwerk'
 require 'pastel'
 require 'arcade'
-#require 'arcade-time-graph'
+require 'arcade-time-graph'
 #begin
 
 module TG
@@ -111,11 +111,12 @@ help
 e=  ARGV.empty? ? :development :  ARGV.last.downcase.to_sym
 ## load test model files
 #require "#{__dir__}/../spec/model_helper"
-
-Loader =  Zeitwerk::Loader.new
-Loader.push_dir ("#{__dir__}/../model")
-Loader.setup
-puts  "DB = Arcade::Database-instance"
+if e.to_s[0].downcase == 't'
+  Loader =  Zeitwerk::Loader.new
+  Loader.push_dir ("#{__dir__}/../spec/model")
+  Loader.setup
+end
+  #puts  "DB = Arcade::Database-instance"
 DB = Arcade::Init.connect e
 #require 'pry'
 require 'irb'
