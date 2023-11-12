@@ -1,24 +1,32 @@
 module Tg
   class Jahr <  TimeBase
-    # returns a single month record
-    def single_month m
-      query.nodes( :out, via: TG::MonthOf, where: { w: m } ).execute &.select_result &.first
-    end
 
-    # returns an array of  month-records
-    # thus enables the use a
-    #   Monat[9].tag[9]
+    # returns a month-node
+    #  or an array of months of a given year
     #
-    # supports  single values, ranges and arrays
-    def monat  *key
-      if key.blank?
-        out_tg_month_of.in
+    # supports  single values and ranges
+    def monat  key=nil
+      if key.nil?
+      nodes( :out, via: Tg::MonthOf ).reverse
       else
-        key=  key.first		if key.is_a?(Array) && key.size == 1
-        #	out_tg_month_of[key].in
-        nodes( :out, via: TG::MonthOf , where: { w: key } )
+      q = query.nodes :out, via: Tg::MonthOf, where: { w: key }
+      r= q.query.select_result
+      if key.is_a? Integer
+        r.first
+      else
+        r.reverse
       end
     end
+
+    # for IRuby
+    def html_attributes
+      in_and_out_attributes.merge jahr: w
+    end
+
+    def invariant_attributes
+      { jahr: w   }
+    end
+  end
   end
 end
 

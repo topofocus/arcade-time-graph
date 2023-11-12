@@ -16,74 +16,121 @@ Examples
     q= query.where( w: key).query.allocate_model
   end
 #
+  def next
+    nodes( :out, via: Tg::GridOf ).first
+  end
+  def prev
+    nodes( :in, via: Tg::GridOf ).first
+  end
+
+		# simplified form of traverse
+		#
+		# we follow the graph (Direction: out)
+		#
+		#    start = "1.1.2000".to_tg.nodes( via: /temp/ ).first
+    #    or
+  	#    start = the_asset.at("1.1.2000")
+  	#
+		#    start.vector(10)                    ==>  returns an Array of Vertices
+    #    start.vector(10){ "w" }             ==>  returns an Array of Hashes :
+    #                                             [ { w => 10 }, { w: 11 } ... ]
+    #    start.vector(10, function: :median){"mean" }  => returns a single value :   12.5
+		#
+		# with
+		#  function: one of 'eval, min, max, sum abs, decimal, avg, count,mode, median, percentil, variance, stddev'
+		# and a block, specifying the  property to work with
+		#
+  def vector  length, where: nil, function: nil,  start_at: 0
+    dir =  length <0 ? :in : :out ;
+    the_vector_query = traverse dir, via: Tg::GridOf, depth: length.abs, where: where, execute: false
+    #			the_vector_query.while "inE('tg_has_ohlc').out != #{to_tg.rid}  " if to_tg.present?  future use
+    t=  Arcade::Query.new from: the_vector_query
+    t.where "$depth >= #{start_at}"
+    if block_given?
+      if function.present?
+        t.projection( "#{function}(#{yield})")
+        t.query.select_result.first           # only one value is returned
+      else
+        t.projection yield
+        t.query.select_result                 # returns an array
+      end
+    else
+      t.query.allocate_model                  # returns a list of vertices
+    end
+  end
+
+	#
+	#  vertices which  are connected via "...grid.." edges, can be accessed by
+	#  * next
+	#  * prev
+	#  * move( count  )
+	#  * + (count)
+	#  * - (count)
+	#
+
+
+
+
+=begin
+Moves horizontally within the grid
+i.e
+  the_day =  "4.8.2000".to_tg
+  the_day.move(9).datum  # => "13.8.2000"
+  the_day.move(-9).datum # => "26.7.2000"
+=end
+    def move count
+      dir =  count <0 ? :in : :out
+      edge_class = detect_edges( dir, Tg::GridOf, expand: false )
+      q1 =  Arcade::Query.new( kind: :traverse )
+        .while( " $depth <= #{count.abs}")
+        .from( self )
+        .nodes( dir, via: edge_class, expand: false)
+
+      q2= Arcade::Query.new from: q1, where: "$depth = #{count.abs} "
+      r =  q2.query.allocate_model
+  #    if r.size == 1
+  #      r.first
+ #     else  # if multible vertices are found, the last one is the date-record, which we want to returna
+            # if the behaviour changes, its also possible to explicit return the Tg::Tag -record
+        r.last
+#      end
+    end
+=begin
+Get the node (item) grids in the future
+
+i.e.
+  the_month =  TG::Jahr[2000].monat(8).pop
+  the_month.value  # -> 8
+  future_month = the_month + 6
+  future_month.value # -> 2
+=end
+    def move_ item
+      move item
+    end
+    alias :+ :move_
+=begin
+Get the node (item) grids in the past
+
+i.e.
+  the_day =  "4.8.2000".to_tg
+  past_day = the_day - 6
+  past_day.datum #  => "29.7.2000"
+=end
+    def move__ item
+      move -item
+    end
+
+    alias :- :move__
+
+    # it is assumed, that any connection to the time-graph is done with an
+    # edge-class containing "has", ie: has_temperature, has_ohlc, has_an_appointment_with
+    def datum
+      nodes( :in, via: Tg::Has ) &.datum
+    end
+
+ 
   end
 #
-#
-#  def analyse_key key    # :nodoc:
-#
-#    new_key=  if key.first.is_a?(Range)
-#			   key.first
-#			elsif key.size ==1
-#			 key.first
-#			else
-#			  key
-#			end
-#  end
-#=begin
-#Get the nearest horizontal neighbours
-#
-#Takes one or two parameters.
-#
-#  (TG::TimeBase.instance).environment: count_of_previous_nodes, count_of_future_nodes
-#
-#Default: return the previous and next 10 items
-#
-#   "22.4.1967".to_tg.environment.datum
-#    => ["12.4.1967", "13.4.1967", "14.4.1967", "15.4.1967", "16.4.1967", "17.4.1967", "18.4.1967", "19.4.1967", "20.4.1967", "21.4.1967", "22.4.1967", "23.4.1967", "24.4.1967", "25.4.1967", "26.4.1967", "27.4.1967", "28.4.1967", "29.4.1967", "30.4.1967", "1.5.1967", "2.5.1967"]
-#
-#It returns an  OrientSupport::Array of TG::TimeBase-Objects
-#
-#
-#
-#=end
-#
-##  def environment previous_items = 10, next_items = nil
-##    next_items =  previous_items  if next_items.nil?  # default : symmetric fetching
-##
-##    my_query =  -> (count) do
-##			dir =  count <0 ? 'in' : 'out'
-##			db.execute {  "select from ( traverse #{dir}(\"tg_grid_of\") from #{rrid} while $depth <= #{count.abs}) where $depth >=1 " }   # don't fetch self and return an Array
-##		end
-##   prev_result = previous_items.zero? ?  []  :  my_query[ -previous_items.abs ]
-##   next_result = next_items.zero? ?  []  : my_query[ next_items.abs ]
-##   # return a collection suitable for further operations
-##   OrientSupport::Array.new work_on: self, work_with: (prev_result.reverse <<  self  | next_result )
-##
-##  end
-##
-#
-#  def environment previous_items = 10, next_items = nil
-#    _environment(previous_items, next_items).execute
-#	end
-#
-#  def _environment previous_items, next_items = nil
-#		q = ->(**p){  OrientSupport::OrientQuery.new **p }
-#
-#    next_items =  previous_items  if next_items.nil?  # default : symmetric fetching
-#		local_var = :a
-#		statement = q[]
-#		{ in: previous_items , out: next_items}.each do | dir, items|
-#				traverse_query = query kind: 'traverse', while: "$depth <= #{items}"
-#				traverse_query.nodes dir, via: TG::GRID_OF, expand: false
-#
-#				statement.let  local_var =>  q[ from: traverse_query, where: '$depth >=1' ]
-#				local_var =  local_var.succ
-#		end
-#    statement.let  '$c= UNIONALL($a,$b) '
-#    statement.expand( '$c')  # returns the statement
-#	end
-#
-#end
 end
  ## The code below is executed on the database after the database-type is created
  ## Use the output of `ModelClass.database_name` as DB type  name

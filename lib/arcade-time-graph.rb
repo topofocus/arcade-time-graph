@@ -3,7 +3,7 @@ end
 TG =  Tg
 TimeGraph = TG
 require 'arcade'
-require_relative 'tg/init_db'
+require_relative 'tg/setup'
 
 require_relative 'model/tg/vertex'
 require_relative 'model/tg/time_base'

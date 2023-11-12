@@ -8,41 +8,38 @@ module Tg
     end
 
 
-	def _jahr
-		query.nodes :in, via: Tg::MonthOf
-	end
-
-  # returns an array of days
+  # returns the day node or an array of days out of a range
   # thus enables the use as
   #   Monat[9].tag(9)
+  #   Monate[9].tag( 2 .. 12 )
   def tag key=nil
     if key.nil?
-      nodes( :out, via: Tg::DayOf ).map( &:in )
+      nodes( :out, via: Tg::DayOf ).reverse
     else
-#			out_tg_day_of.in
-      q =  Arcade::Query.new  from: rid
-      q.nodes :out, via: Tg::DayOf, where: { w: key }
-      q.query.select_result
+      q = query.nodes :out, via: Tg::DayOf, where: { w: key }
+      r= q.query.select_result
+      if key.is_a? Integer
+        r.first
+      else
+        r.reverse
+      end
     end
   end
 
-  # returns the specified edge
-  #  i.e.  Monat[9]
-  #
-
+ # 
   def jahr
     nodes( :in, via: Tg::MonthOf ).first
   end
 
-	# returns the absolute Month-Value
-  #
-  # enables easy calculations betwwen month-vertices
-	#
-	# i.e.  TG::Jahr[2013].monat(4).abs_value.first - TG::Jahr[2012].monat(9).abs_value.first
-	#       => 7
-	def abs_value
-		jahr.value * 12 + value
-	end
+    # for IRuby
+
+    def html_attributes
+      in_and_out_attributes.merge monat: w
+    end
+
+    def invariant_attributes
+      { monat: w }
+    end
 
 	def self.fetch datum   # parameter: a date
 #		query_database( "select  expand (out_tg_day_of.in[value = #{datum.day}]) from (select  expand (out_tg_month_of.in[value = #{datum.month}]) from (select from tg_jahr where value = #{datum.year} ) ) ") &.first
