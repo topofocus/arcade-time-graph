@@ -7,17 +7,17 @@ module Tg
     # supports  single values and ranges
     def monat  key=nil
       if key.nil?
-      nodes( :out, via: Tg::MonthOf ).reverse
+        nodes( :out, via: Tg::MonthOf ).reverse
       else
-      q = query.nodes :out, via: Tg::MonthOf, where: { w: key }
-      r= q.query.select_result
-      if key.is_a? Integer
-        r.first
-      else
-        r.reverse
+        q = query.nodes :out, via: Tg::MonthOf, where: { w: key }
+        r= q.query.select_result
+        if key.is_a? Integer
+          r.first
+        else
+          r.reverse
+        end
       end
     end
-
     # for IRuby
     def html_attributes
       in_and_out_attributes.merge jahr: w
@@ -26,7 +26,16 @@ module Tg
     def invariant_attributes
       { jahr: w   }
     end
-  end
+
+    def self.db_init
+      File.read(__FILE__).gsub(/.*__END__/m, '')
+    end
+
   end
 end
+ ## The code below is executed on the database after the database-type is created
+ ## Use the output of `ModelClass.database_name` as DB type  name
+ ##
+__END__
+ CREATE INDEX  ON tg_jahr ( w ) UNIQUE
 

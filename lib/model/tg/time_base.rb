@@ -1,9 +1,6 @@
 module  Tg
   class TimeBase  < Tg::Vertex
 
-      def self.db_init
-         File.read(__FILE__).gsub(/.*__END__/m, '')
-       end
 =begin
 Search for specific records
 
@@ -128,7 +125,10 @@ i.e.
       nodes( :in, via: Tg::Has ) &.datum
     end
 
- 
+    def self.db_init
+      File.read(__FILE__).gsub(/.*__END__/m, '')
+    end
+
   end
 #
 end
@@ -136,6 +136,4 @@ end
  ## Use the output of `ModelClass.database_name` as DB type  name
  ##
 __END__
- CREATE PROPERTY tg_time_base.value_string STRING
- CREATE PROPERTY tg_time_base. w  INTEGER
- CREATE INDEX  ON tg_time_base ( w ) NOTUNIQUE
+ CREATE PROPERTY tg_time_base.w  INTEGER
