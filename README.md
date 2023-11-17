@@ -38,6 +38,25 @@ z.move( -20 ).datum => Sun, 02 Mar 2003
 ```
 (datum is a method of Tg::Tag)
 
+### Get date ranges
+
+To fetch specific date ranges the utility method `TG::Timegraph.get_nodes_for` is present
+
+```ruby 
+ t=TG::TimeGraph.get_nodes_for( years: 2023, months: 5..9, days: 3..19  ){ |y| y.nodes :out, via: HasOrder   }
+ Q: select out('has_order') from
+             ( select  expand ( out('tg_day_of')[ w between 3 and 19  ]  ) from
+             ( select  expand ( out('tg_month_of')[ w between 5 and 9  ]  ) from
+             ( select from tg_jahr where w=2023  )
+             )
+             )
+```
+It  fetches  connected HasOrder-Nodes for the specified days of the selected months. The methods accepts single values, arrays and ranges as arguments.
+The `days` parameter is optional. 
+
+
+
+
 *Prerequisites* : 
 * Ruby 3.1 (or above)  and a running ArcadeDB-Server
 * add `gem "arcade-time-graph", git: "https://github.com/topofocus/arcade-time-graph"` to your Gemfile
@@ -94,9 +113,14 @@ Jahr[2000]    # --> returns a single object
 => #<Tg::Jahr rid="#193:0" values={:value=>2000} in=0 out=13> 
 
 
-Jahr[2000 .. 2005].value  # returns an array
+Jahr[2000 .. 2005].map &:w  # returns an array
  => [2003, 2000, 2004, 2001, 2005, 2002] 
 
+Jahr[2000 .. 2005]{|y| y.nodes( :out, via: HasPosition )}
+
+fires this query: `" select out('has_position')  from (select from tg_Jahr where w  between 2000 and 2005) "`
+
+This selects six `Jahr`-vertices and performes the  Arcade::Query.nodes command on the selection. 
 
 ## Horizontal Connections
 

@@ -7,10 +7,35 @@ Search for specific records
 Examples
   Monat[8]  --> Array of all August-month-records
   Jahr[1930 .. 1945]
+
+The optional block receives an Arcade::Query object. This should be returned.
+
+Example
+
+> DB.query( " select out('has_position')  from (select from tg_monat where w=3) " ).select_result
+gets all out-nodes form all march-month-nodes
+
+>  Monat[3]{ |y| y.nodes :out, via: HasPosition  }
+
+does the same
+
+
 =end
   def self.[] *key
 		key=  key.first		if key.is_a?(Array) && key.size == 1
-    q= query.where( w: key).query.allocate_model
+    q= query.where( w: key) 
+
+    if block_given?
+      yield( q ).query.select_result
+    else
+      q.query.allocate_model
+    end
+  end
+
+  # enables Jahr.at(2023).monat(5..8)
+  def self.at *key
+    key = key.first if key.size == 1
+    query.where(w: key)
   end
 #
   def next

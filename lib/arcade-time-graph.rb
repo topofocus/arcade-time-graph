@@ -5,6 +5,8 @@ TimeGraph = TG
 require 'arcade'
 require_relative 'tg/setup'
 
+require_relative 'tg/array.rb'
+require_relative 'tg/query.rb'
 require_relative 'model/tg/vertex'
 require_relative 'model/tg/time_base'
 require_relative 'model/tg/tag'

@@ -7,15 +7,16 @@ module Tg
     # supports  single values and ranges
     def monat  key=nil
       if key.nil?
-        nodes( :out, via: Tg::MonthOf ).reverse
+        query.nodes( :out, via: Tg::MonthOf )
       else
         q = query.nodes :out, via: Tg::MonthOf, where: { w: key }
-        r= q.query.select_result
-        if key.is_a? Integer
-          r.first
-        else
-          r.reverse
-        end
+      end
+      q = yield q if block_given?
+      r= q.query.select_result
+      if key.is_a? Integer
+        r.first
+      else
+        r.reverse
       end
     end
     # for IRuby
