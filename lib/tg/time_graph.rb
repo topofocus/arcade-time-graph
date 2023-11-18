@@ -97,20 +97,22 @@ class TimeGraph
 
     end
 
-    #   get nodes for
+    #   select
     #
-    #   t=TG::TimeGraph.get_nodes_for( months: 5..9, days: 3 .. 19 ){ |y| y.nodes :out, via: HasOrder  }
+    #   t=TG::TimeGraph.select( months: 5..9, days: 3..19 ){ |y| y.nodes :out, via: HasOrder  }
     #   Q: select out('has_order') from
-    #             ( select  expand ( out('tg_day_of')[ w between 3 and 19   ]  ) from
-    #             ( select  expand ( out('tg_month_of')[ w between 5 and 9   ]  ) from
-    #             ( select from tg_jahr where w=2023   )
+    #             ( select  expand ( out('tg_day_of')[ w between 3 and 19 ] ) from
+    #             ( select  expand ( out('tg_month_of')[ w between 5 and 9 ] ) from
+    #             ( select from tg_jahr where w=2023 )
     #             )
     #             )
     #   gets connected HasOrder-Nodes for the specified days of the selected month of the current year
     #
-    def get_nodes_for years: Date.today.year, months: Date.today.month, days: 0 , execute: false
-      q1 = TG::Jahr.at years
+    #   returns an Arcade::Query unless "execute: true" ist specified or a block is provided
+    #
+    def select years: Date.today.year, months: Date.today.month, days: 0 , execute: false
 
+      q1 = TG::Jahr.at years
       q2 = Arcade::Query.new from: q1
       q2.nodes :out, via: TG::MonthOf, expand: true, where: { w: months }
 
@@ -126,10 +128,10 @@ class TimeGraph
         q4 = Query.new from: the_q
         yield( q4 ).execute.select_result
       elsif  execute
-          the_q.execute.select_result
-        else
-          the_q
-        end
+        the_q.execute.select_result
+      else
+        the_q
+      end
     end
 
 

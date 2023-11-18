@@ -38,20 +38,23 @@ z.move( -20 ).datum => Sun, 02 Mar 2003
 ```
 (datum is a method of Tg::Tag)
 
-### Get date ranges
+### Get date ranges through TG::TimeGraph.select
 
-To fetch specific date ranges the utility method `TG::Timegraph.get_nodes_for` is present
+To fetch specific date ranges the utility method `TG::TimeGraph.select` is present.
+It returns either an array of TG::Tag objects (parameter execute: true) or an Arcade::Query.
+If a block is provided, associated nodes can easily fetched through `nodes`.
+
 
 ```ruby 
- t=TG::TimeGraph.get_nodes_for( years: 2023, months: 5..9, days: 3..19  ){ |y| y.nodes :out, via: HasOrder   }
+ t=TG::TimeGraph.select( years: [2020,2023], months: 5..9, days: 3..19  ){ |y| y.nodes :out, via: HasOrder   }
  Q: select out('has_order') from
              ( select  expand ( out('tg_day_of')[ w between 3 and 19  ]  ) from
-             ( select  expand ( out('tg_month_of')[ w between 5 and 9  ]  ) from
-             ( select from tg_jahr where w=2023  )
-             )
+               ( select  expand ( out('tg_month_of')[ w between 5 and 9  ]  ) from
+                 ( select from tg_jahr where w in [2020,2023]  )
+               )
              )
 ```
-It  fetches  connected HasOrder-Nodes for the specified days of the selected months. The methods accepts single values, arrays and ranges as arguments.
+The methods accepts single values, arrays and ranges as arguments.
 The `days` parameter is optional. 
 
 
