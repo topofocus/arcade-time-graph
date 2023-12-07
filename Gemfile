@@ -1,7 +1,5 @@
 source "https://rubygems.org"
-#gemspec
-## jruby support is experimental, not tested jet
-#gem 'orientdb' , :git => 'git://github.com/topofocus/orientdb-jruby.git' , :platforms => :jruby
+gemspec
 gem 'arcadedb' , path: '../arcadedb/' # :git => 'git://github.com/topofocus/arcadedb.git'
 gem 'pastel'
 

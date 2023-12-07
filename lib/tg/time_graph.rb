@@ -134,6 +134,33 @@ class TimeGraph
       end
     end
 
+    # generates a match statement that exhibits the correponding timegrid nodes.
+    #
+    # the day-vertices are exposed through day
+    # and
+    # the month-verttices through month.
+    #
+    # grid returns a Match-Object thus further nodes can be addressed
+    #
+    # i.e.  TG::TimeGraph.grid( 2020, 7..9, 5 ).out( HasOhlc ).node( as: :contract ).execute.select_result(:contract)
+    #       returns all contracts connected to the timegrid on the 5th July, August and September 2020 
+    def grid years = Date.today.year, months =  Date.today.month, days = 0 , execute: false
+
+      # select monthly time-grid-node
+      z= Arcade::Match.new( type: TG::Jahr, where: { w: years  } )
+                      .out( TG::MonthOf ).node( where: { w: months }, as: :month )
+
+      # select daily time-grid-node if days is specified
+      if days in (1 .. 31)
+        z= z.out( TG::DateOf  ).node( where: { w: days }, as: :day )
+        result =  :day
+      else
+        result =  :month
+      end
+      execute ? z.execute.select_result( result ) : z
+    end
+
+
 
   end ## << self
 end # class

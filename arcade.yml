@@ -1,15 +1,15 @@
 ---
 :environment:
   :test:
-    dbname: playground
+    dbname: timegridtest
     user:  root
     pass:  topo1focus
   :development:
-    dbname: devel
+    dbname: timegrid
     user: root
     pass:  topo1focus
   :production:
-    dbname: production
+    dbname: timegrid
     user: root
     pass: topo1focus
 :admin:

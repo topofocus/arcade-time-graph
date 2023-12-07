@@ -38,25 +38,24 @@ z.move( -20 ).datum => Sun, 02 Mar 2003
 ```
 (datum is a method of Tg::Tag)
 
-### Get date ranges through TG::TimeGraph.select
+### Get date ranges through TG::TimeGraph.grid
 
-To fetch specific date ranges the utility method `TG::TimeGraph.select` is present.
-It returns either an array of TG::Tag objects (parameter execute: true) or an Arcade::Query.
-If a block is provided, associated nodes can easily fetched through `nodes`.
-
+To fetch specific date ranges the utility method `TG::TimeGraph.grid is present.
+It returns an Arcade::Match-Object –  or, if `execute: true` is specified, an array of TG::Tag or .TG::Monat objects
 
 ```ruby 
- t=TG::TimeGraph.select( years: [2020,2023], months: 5..9, days: 3..19  ){ |y| y.nodes :out, via: HasOrder   }
- Q: select out('has_order') from
-             ( select  expand ( out('tg_day_of')[ w between 3 and 19  ]  ) from
-               ( select  expand ( out('tg_month_of')[ w between 5 and 9  ]  ) from
-                 ( select from tg_jahr where w in [2020,2023]  )
-               )
-             )
-```
-The methods accepts single values, arrays and ranges as arguments.
-The `days` parameter is optional. 
+ t=TG::TimeGraph.grid(  2020, 5..9  ){ "month.w, contract.shortcut" }
+                .out(HasPosition)
+                .node( as: contract )
+ => MATCH { type: tg_jahr, where: ( w=2020  )  }
+          .out('tg_month_of'){ where: ( w between 5 and 9   ), as: month  }
+          .out('has_position'){ as: contract  } 
+   RETURN month.w, contract.shortcut       # <--- contents of the optional block 
 
+ t.execute.select_result( :"contract.shortcut" )  # <--- gets a list of shortcuts only
+```
+The method accepts single values, arrays and ranges as arguments.
+The `days` parameter is optional. 
 
 
 
