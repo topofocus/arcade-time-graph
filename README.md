@@ -47,10 +47,10 @@ It returns an Arcade::Match-Object –  or, if `execute: true` is specified, an 
  t=TG::TimeGraph.grid(  2020, 5..9  ){ "month.w, contract.shortcut" }
                 .out(HasPosition)
                 .node( as: contract )
- => MATCH { type: tg_jahr, where: ( w=2020  )  }
-          .out('tg_month_of'){ where: ( w between 5 and 9   ), as: month  }
-          .out('has_position'){ as: contract  } 
-   RETURN month.w, contract.shortcut       # <--- contents of the optional block 
+ => MATCH { type: tg_jahr, where: ( w=2020  ) }
+          .out('tg_month_of'){ where: ( w between 5 and 9   ), as: month }
+          .out('has_position'){ as: "contract" } 
+    RETURN month.w, contract.shortcut       # <--- contents of the optional block 
 
  t.execute.select_result( :"contract.shortcut" )  # <--- gets a list of shortcuts only
 ```
