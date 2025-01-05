@@ -40,13 +40,13 @@ z.move( -20 ).datum => Sun, 02 Mar 2003
 
 ### Get date ranges through TG::TimeGraph.grid
 
-To fetch specific date ranges the utility method `TG::TimeGraph.grid is present.
-It returns an Arcade::Match-Object –  or, if `execute: true` is specified, an array of TG::Tag or .TG::Monat objects
+To fetch specific date ranges a utility method `TG::TimeGraph.grid` is present.
+It returns an Arcade::Match-Object –  or, if `execute: true` is specified  – an array of TG::Tag/TG::Monat objects
 
 ```ruby 
- t=TG::TimeGraph.grid(  2020, 5..9  ){ "month.w, contract.shortcut" }
-                .out(HasPosition)
-                .node( as: contract )
+ t=TG::TimeGraph.grid( 2020, 5..9 ){ "month.w, contract.shortcut" }
+                .out( HasPosition )
+                .node( as: "contract" )
  => MATCH { type: tg_jahr, where: ( w=2020  ) }
           .out('tg_month_of'){ where: ( w between 5 and 9   ), as: month }
           .out('has_position'){ as: "contract" } 
@@ -129,7 +129,7 @@ This selects six `Jahr`-vertices and performes the  Arcade::Query.nodes command 
 Besides the hierarchically TimeGraph »Jahr <-->Monat <--> Tag <--> Stunde«  the Vertices are connected
 horizontally via »grid_to«-Edges. This enables an easy access to the neighbours.
 
-On the Tg::TimeBase-Level a method »vector« is implemented, that gathers the adjacent vertices 
+On the Tg::TimeBase-Level a method »vector« is implemented, that gathers :adjacent vertices 
 via traverse.
 
 ``` ruby
