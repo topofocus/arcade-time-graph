@@ -85,14 +85,14 @@ DB.hierarchy type: :vertex
 - - tg_date_of       Tg::MonthOf
 - - - tg_day_of      Tg::DayOf
 - - - tg_month_of    Tg::TimeOf
-- - grid_of		       Tg::GridOf
-- - has    		       Tg::Has
+- - tg_grid_of		   Tg::GridOf
+- - tg_has    		   Tg::Has
 - Arcade::Vertex 
-- - tg_time_base    Tg::TimeBase
-- - - tg_jahr       Tg::Jahr
-- - - tg_monat      Tg::Monat
-- - - tg_tag        Tg::Tag
-- - - stunde	      Tg::Stunde
+- - tg_time_base     Tg::TimeBase
+- - - tg_jahr        Tg::Jahr
+- - - tg_monat       Tg::Monat
+- - - tg_tag         Tg::Tag
+- - - tg_stunde	     Tg::Stunde
 ```
 
 The graph is populated by calling 
