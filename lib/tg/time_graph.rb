@@ -34,9 +34,9 @@ class TimeGraph
       #										 end
       #
 
-    #  hourly_vertexes = ->  do 
+    #  hourly_vertices = ->  do 
     #    hour_vertices = (0 .. 23).map do |h|
-    #      hour_vertex =  Stunde.create( w: h)
+    #      hour_vertex =  Stunde.insert( w: h)
 
     #      Tg::GridOf.create( from: hour_grid , to: hour_vertex ) if hour_grid.present?
     #      hour_grid =  hour_vertex
@@ -59,7 +59,7 @@ class TimeGraph
       years.each do | the_year |
         year_vertex = Tg::Jahr.insert w: the_year
         last_year_vertex.assign via: TG::GridOf,  vertex: year_vertex  unless last_year_vertex.nil?
-        last_year_vertex =  year_vertex
+        last_year_vertex = year_vertex
         last_month_vertex, last_day_vertex = create_monthly_vertexes year_vertex, last_month_vertex, last_day_vertex
         print "#{the_year} "
       end
@@ -151,7 +151,7 @@ class TimeGraph
                       .out( TG::MonthOf ).node( where: { w: months }, as: :month )
 
       # select daily time-grid-node if days is specified
-      if days in (1 .. 31)
+      if !days.zero?
         z= z.out( TG::DateOf  ).node( where: { w: days }, as: :day )
         result =  :day
       else
