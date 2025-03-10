@@ -144,14 +144,14 @@ class TimeGraph
     #
     # i.e.  TG::TimeGraph.grid( 2020, 7..9, 5 ).out( HasOhlc ).node( as: :contract ).execute.select_result(:contract)
     #       returns all contracts connected to the timegrid on the 5th July, August and September 2020 
-    def grid years = Date.today.year, months =  Date.today.month, days = 0 , execute: false
+    def grid years = Date.today.year, months =  Date.today.month, days = nil , execute: false
 
       # select monthly time-grid-node
       z= Arcade::Match.new( type: TG::Jahr, where: { w: years  } )
                       .out( TG::MonthOf ).node( where: { w: months }, as: :month )
 
       # select daily time-grid-node if days is specified
-      if !days.zero?
+      if !days.nil?
         z= z.out( TG::DateOf  ).node( where: { w: days }, as: :day )
         result =  :day
       else
