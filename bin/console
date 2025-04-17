@@ -10,13 +10,12 @@ require 'bundler/setup'
 #require 'terminal-table'
 #require 'zeitwerk'
 require 'pastel'
+ProjectRoot =  Pathname.new( Dir.pwd ).parent
 require 'arcade'
 require 'arcade-time-graph'
 #begin
-
-module TG
-end
 Tg= TG
+
 
 def browse  db: Arcade::Api.databases.first , extended: false
 
